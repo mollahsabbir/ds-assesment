@@ -43,6 +43,8 @@ def train():
     results = train_model(ensemble, epochs)
     if not os.path.exists('inference_model'):
         os.makedirs('inference_model')
+    
+    model = results["model"]
     torch.save(results["model"], "inference_model/model.pt")
     return jsonify({'message': 'Training complete'})
 
