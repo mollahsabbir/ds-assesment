@@ -6,7 +6,6 @@ from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader, random_split
 from tqdm import tqdm
 import importlib
-import matplotlib.pyplot as plt
 
 from utils import DATA_DIR, EPOCHS
 from utils import calculate_mean_std
@@ -43,21 +42,25 @@ def validate_epoch(model, device, val_loader, criterion):
     val_loss = 0.0
     correct = 0
     total = 0
+    y_pred = []
+    y_true = []
+    
     with torch.no_grad():
         for images, labels in val_loader:
-
             images, labels = images.to(device), labels.to(device)
-
             outputs = model(images)
             loss = criterion(outputs, labels)
             val_loss += loss.item() * images.size(0)
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
+            
+            y_pred.extend(predicted.tolist())
+            y_true.extend(labels.tolist())
 
         val_loss /= len(val_loader.dataset)
         val_accuracy = 100 * correct / total
-        return val_loss, val_accuracy
+        return val_loss, val_accuracy, y_pred, y_true
     
 def train(model):
 
@@ -70,11 +73,10 @@ def train(model):
 
     train_transform = transforms.Compose([
         transforms.RandomResizedCrop(size=256, scale=(0.8, 1.0)),
-        transforms.RandomRotation(degrees=30),
+        transforms.RandomRotation(degrees=20),
         transforms.RandomHorizontalFlip(),
-        transforms.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.3, hue=0.3),
-        transforms.RandomGrayscale(p=0.1),
-        transforms.Resize(256),
+        # transforms.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.3, hue=0.3),
+        # transforms.RandomGrayscale(p=0.1),
         transforms.ToTensor(),
         transforms.Normalize(mean=mean,
                             std=std)
@@ -111,7 +113,7 @@ def train(model):
 
         train_loss, train_accuracy = train_epoch(model, device, train_loader, optimizer, criterion)
 
-        val_loss, val_accuracy = validate_epoch(model, device, val_loader, criterion)
+        val_loss, val_accuracy, _, _ = validate_epoch(model, device, val_loader, criterion)
         
         train_losses.append(train_loss)
         val_losses.append(val_loss)
@@ -121,7 +123,7 @@ def train(model):
         print(f'Epoch {epoch+1}/{EPOCHS}, Train Loss: {train_loss:.4f}, Train Acc: {train_accuracy:.2f}%, '
             f'Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.2f}%')
 
-    test_loss, test_accuracy = validate_epoch(model, device, test_loader, criterion)
+    test_loss, test_accuracy, y_pred, y_true = validate_epoch(model, device, test_loader, criterion)
     print(f'Test Loss: {test_loss:.4f}, Test Acc: {test_accuracy:.2f}%')
 
     return {
@@ -129,5 +131,7 @@ def train(model):
         "val_losses" : val_losses,
         "train_accs" : train_accs,
         "val_accs" : val_accs,
+        "y_pred" : y_pred,
+        "y_true" : y_true,
         "model" : model
     }
