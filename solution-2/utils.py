@@ -4,7 +4,7 @@ from torchvision.transforms import transforms
 
 # Constants
 DATA_DIR = "data/dataset_256X256/dataset_256X256/"
-EPOCHS = 20
+DEFAULT_EPOCHS = 20
 
 def calculate_mean_std(data_dir=DATA_DIR):
     transform = transforms.Compose([

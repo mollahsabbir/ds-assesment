@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader, random_split
 from tqdm import tqdm
 import importlib
 
-from utils import DATA_DIR, EPOCHS
+from utils import DATA_DIR, DEFAULT_EPOCHS
 from utils import calculate_mean_std
 from model import Conv2Model
 
@@ -62,12 +62,13 @@ def validate_epoch(model, device, val_loader, criterion):
         val_accuracy = 100 * correct / total
         return val_loss, val_accuracy, y_pred, y_true
     
-def train(model):
+def train(model, epochs=DEFAULT_EPOCHS):
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
-    print("Calculating train mean and std.")
-    mean, std = calculate_mean_std()
+    # print("Calculating train mean and std.")
+    # mean, std = calculate_mean_std()
+    mean, std = torch.tensor([0.4973, 0.4484, 0.3651]),torch.tensor([0.2267, 0.2191, 0.2191])
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -109,7 +110,7 @@ def train(model):
     train_accs = []
     val_accs = []
 
-    for epoch in range(EPOCHS): 
+    for epoch in range(epochs): 
 
         train_loss, train_accuracy = train_epoch(model, device, train_loader, optimizer, criterion)
 
@@ -120,7 +121,7 @@ def train(model):
         train_accs.append(train_accuracy)
         val_accs.append(val_accuracy)
         
-        print(f'Epoch {epoch+1}/{EPOCHS}, Train Loss: {train_loss:.4f}, Train Acc: {train_accuracy:.2f}%, '
+        print(f'Epoch {epoch+1}/{epochs}, Train Loss: {train_loss:.4f}, Train Acc: {train_accuracy:.2f}%, '
             f'Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.2f}%')
 
     test_loss, test_accuracy, y_pred, y_true = validate_epoch(model, device, test_loader, criterion)

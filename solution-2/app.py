@@ -6,9 +6,10 @@ import torchvision.transforms as transforms
 from PIL import Image
 from flask import Flask, jsonify, request
 
-from utils import calculate_mean_std
+from utils import calculate_mean_std, DEFAULT_EPOCHS
 from train import train as train_model
 from model import Conv2Model, Conv3Model, EnsembleModel
+import os
 
 app = Flask(__name__)
 
@@ -17,7 +18,11 @@ CLASS_NAMES = ['berry', 'bird', 'dog', 'flower']
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-model = torch.load(MODEL_PATH, map_location=device)
+try:
+    model = torch.load(MODEL_PATH, map_location=device)
+except:
+    model = EnsembleModel(Conv2Model(), Conv3Model()).to(device)
+    
 model.eval()
 
 transform = transforms.Compose([
@@ -29,9 +34,16 @@ transform = transforms.Compose([
 
 @app.route('/train', methods=['POST'])
 def train():
+    
+    epochs = int(request.args.get('epochs'))
+    if not epochs:
+        epochs = DEFAULT_EPOCHS
+    
     ensemble = EnsembleModel(Conv2Model(), Conv3Model())
-    train_model(ensemble)
-    # Todo: Implement model saving mechanism
+    results = train_model(ensemble, epochs)
+    if not os.path.exists('inference_model'):
+        os.makedirs('inference_model')
+    torch.save(results["model"], "inference_model/model.pt")
     return jsonify({'message': 'Training complete'})
 
 @app.route('/infer', methods=['POST'])
