@@ -11,7 +11,7 @@ have to take all of this kind of data to a single Agent.
 the process.
 
 # Answer
-Given the constraint that the social media posts may be contain different formats, I would approach the problem by leveraging **multi-modal learning**. To achieve this, I would follow the steps detailed below.
+Given the constraint that the social media posts may contain different formats, I would approach the problem by leveraging **multi-modal learning**. To achieve this, I would follow the steps detailed below.
 
 ![Demo pipeline using early fusion](pipeline.png)
 *Image 1: Demo pipeline using early fusion*
@@ -21,8 +21,9 @@ Before approaching the problem, my preliminary step would be to look for academi
 
 ## 2. Dataset creation
 ### 2.1 Data Collection
-|  |
-|-------|
+
+| |
+|-|
 | Before going for the time and cost inducing methods, I would look for **existing social media datasets** on the internet. |
 | After exhaustively looking for the publicly available datasets, I would look for **APIs provided by different social media websites** such as Facebook, Twitter, Reddit, Instagram, etc. |
 | Finally, after merging the data retrieved by the two methods mentioned above, I would **scrape websites** that legally allow to do so. |
@@ -65,6 +66,6 @@ To find the trends, I would try to first categorize the contents in different to
 
 To find if two contents are depicting the same real life event/emotion, the embeddings from the MLP can be used by finding their `cos_similarity` or other similar algorithms.
 
-## 4 Discussion
+## 4. Discussion
 
 The proposed methodology has many challenges that can only be verified and tackled through rigorous experimentations. One such problem may arise from missing modalities, which currently may be addressed by passing placeholder zero vectors. More solutions may be attempted based on [newer studies](https://arxiv.org/abs/2303.03369). In this answer, I have only discussed about early fusion, whereas other fusion strategies, such as intermediate fusion and late fusion may also be experimented with.
