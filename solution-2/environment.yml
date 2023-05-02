@@ -1,6 +1,5 @@
 name: torch
 channels:
-  - conda-forge
   - defaults
 dependencies:
   - python=3.8
@@ -8,8 +7,9 @@ dependencies:
   - torchvision
   - jupyter
   - tqdm
-  - matplotlib
   - scikit-learn
   - numpy
+  - matplotlib
   - seaborn
   - flask
+prefix: /home/draco/miniconda3/envs/torch

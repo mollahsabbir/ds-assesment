@@ -1,14 +1,11 @@
-FROM conda/miniconda3
+FROM continuumio/miniconda3
 
 WORKDIR /app
 COPY . /app
 
-# RUN conda env create -f environment.yml && \
-#     conda activate torch
+RUN conda env create -f environment.yml && \
+    conda clean --all --yes
 
-RUN conda env create -f environment.yml
-RUN conda activate torch
+SHELL ["/bin/bash", "-c"]
 
-EXPOSE 5000
-
-CMD ["python", "app.py"]
+CMD ["bash", "-c", "source activate torch && python app.py"]

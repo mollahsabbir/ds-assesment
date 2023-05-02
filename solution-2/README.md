@@ -8,6 +8,12 @@ docker build -t torchimage .
 docker run -p 5000:5000 -v /local/path/to/dataset:/app/data torchimage
 ```
 
+```
+TRAIN: curl -k -X POST -v  http://localhost:5000/train?epochs=20
+
+INFER: curl -k -X POST -F 'image=@<path/to/jpg/file>' -v  http://localhost:5000/infer
+```
+
 # Tasks
 ## Preprocess the Data
 - Data preprocessing has been done in [train](train.py) file.
