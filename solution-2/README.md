@@ -7,6 +7,8 @@ cd solution-2/
 docker build -t torchimage .
 docker run -p 5000:5000 -v /local/path/to/dataset:/app/data torchimage
 ```
+`/local/path/to/dataset` should point to a path that contains the unzipped dataset. For example, if the dataset is in this structure `...\data\dataset_256X256\dataset_256X256\[train/test]`, then the path should be `.../data`.
+
 
 ```
 TRAIN: curl -k -X POST -v  http://localhost:5000/train?epochs=20
